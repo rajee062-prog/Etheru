@@ -1,0 +1,863 @@
+{
+  "name": "Premier Cricket League",
+  "seasons": [
+    {
+      "id": "S2023",
+      "name": "Season 2023",
+      "matches": [
+        {
+          "id": "M001",
+          "date": "2023-04-10",
+          "venue": "Green Park Stadium",
+          "team1": "Royal Strikers",
+          "team2": "Thunder Eagles",
+          "toss": "Royal Strikers",
+          "elected": "bat",
+          "result": "Royal Strikers won by 34 runs",
+          "winner": "Royal Strikers",
+          "innings": [
+            {
+              "battingTeam": "Royal Strikers",
+              "total": 187,
+              "wickets": 6,
+              "overs": 20,
+              "batting": [
+                {
+                  "name": "Arjun Sharma",
+                  "runs": 72,
+                  "balls": 48,
+                  "fours": 8,
+                  "sixes": 3,
+                  "out": "c Thompson b Malik"
+                },
+                {
+                  "name": "Rohan Patel",
+                  "runs": 45,
+                  "balls": 35,
+                  "fours": 5,
+                  "sixes": 1,
+                  "out": "b Malik"
+                },
+                {
+                  "name": "Dev Singh",
+                  "runs": 30,
+                  "balls": 22,
+                  "fours": 3,
+                  "sixes": 1,
+                  "out": "run out (Jones)"
+                },
+                {
+                  "name": "Kiran Mehta",
+                  "runs": 18,
+                  "balls": 14,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "c Jones b Ali"
+                },
+                {
+                  "name": "Priya Kapoor",
+                  "runs": 12,
+                  "balls": 9,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "not out"
+                },
+                {
+                  "name": "Suresh Kumar",
+                  "runs": 5,
+                  "balls": 4,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Ali"
+                },
+                {
+                  "name": "Vikram Nair",
+                  "runs": 5,
+                  "balls": 3,
+                  "fours": 0,
+                  "sixes": 1,
+                  "out": "not out"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Malik Hassan",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 38,
+                  "wickets": 2,
+                  "economy": 9.5
+                },
+                {
+                  "name": "James Ali",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 32,
+                  "wickets": 2,
+                  "economy": 8.0
+                },
+                {
+                  "name": "Tom Jones",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 40,
+                  "wickets": 0,
+                  "economy": 10.0
+                },
+                {
+                  "name": "Chris Thompson",
+                  "overs": 4,
+                  "maidens": 1,
+                  "runs": 35,
+                  "wickets": 1,
+                  "economy": 8.75
+                },
+                {
+                  "name": "Sam Wright",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 42,
+                  "wickets": 1,
+                  "economy": 10.5
+                }
+              ],
+              "fielding": [
+                { "name": "Chris Thompson", "catches": 1, "runouts": 0 },
+                { "name": "Tom Jones", "catches": 0, "runouts": 1 }
+              ]
+            },
+            {
+              "battingTeam": "Thunder Eagles",
+              "total": 153,
+              "wickets": 10,
+              "overs": 19.2,
+              "batting": [
+                {
+                  "name": "Malik Hassan",
+                  "runs": 43,
+                  "balls": 32,
+                  "fours": 4,
+                  "sixes": 2,
+                  "out": "c Sharma b Kumar"
+                },
+                {
+                  "name": "James Ali",
+                  "runs": 35,
+                  "balls": 28,
+                  "fours": 4,
+                  "sixes": 1,
+                  "out": "b Nair"
+                },
+                {
+                  "name": "Tom Jones",
+                  "runs": 22,
+                  "balls": 20,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "b Kapoor"
+                },
+                {
+                  "name": "Chris Thompson",
+                  "runs": 18,
+                  "balls": 15,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "c Patel b Singh"
+                },
+                {
+                  "name": "Sam Wright",
+                  "runs": 14,
+                  "balls": 12,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "b Kumar"
+                },
+                {
+                  "name": "Ben Clarke",
+                  "runs": 10,
+                  "balls": 9,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "run out (Mehta)"
+                },
+                {
+                  "name": "Ryan Foster",
+                  "runs": 5,
+                  "balls": 6,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Nair"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Suresh Kumar",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 28,
+                  "wickets": 2,
+                  "economy": 7.0
+                },
+                {
+                  "name": "Vikram Nair",
+                  "overs": 3.2,
+                  "maidens": 0,
+                  "runs": 25,
+                  "wickets": 2,
+                  "economy": 7.5
+                },
+                {
+                  "name": "Priya Kapoor",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 35,
+                  "wickets": 2,
+                  "economy": 8.75
+                },
+                {
+                  "name": "Dev Singh",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 30,
+                  "wickets": 2,
+                  "economy": 7.5
+                },
+                {
+                  "name": "Kiran Mehta",
+                  "overs": 4,
+                  "maidens": 1,
+                  "runs": 35,
+                  "wickets": 1,
+                  "economy": 8.75
+                }
+              ],
+              "fielding": [
+                { "name": "Arjun Sharma", "catches": 2, "runouts": 0 },
+                { "name": "Rohan Patel", "catches": 1, "runouts": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "M002",
+          "date": "2023-04-17",
+          "venue": "Eden Sports Ground",
+          "team1": "Lightning Lions",
+          "team2": "Storm Warriors",
+          "toss": "Storm Warriors",
+          "elected": "field",
+          "result": "Lightning Lions won by 5 wickets",
+          "winner": "Lightning Lions",
+          "innings": [
+            {
+              "battingTeam": "Storm Warriors",
+              "total": 164,
+              "wickets": 9,
+              "overs": 20,
+              "batting": [
+                {
+                  "name": "Raj Kumar",
+                  "runs": 55,
+                  "balls": 42,
+                  "fours": 6,
+                  "sixes": 2,
+                  "out": "b Fernandez"
+                },
+                {
+                  "name": "Amir Shah",
+                  "runs": 40,
+                  "balls": 33,
+                  "fours": 4,
+                  "sixes": 1,
+                  "out": "c Diaz b Vega"
+                },
+                {
+                  "name": "Hassan Ali",
+                  "runs": 28,
+                  "balls": 24,
+                  "fours": 3,
+                  "sixes": 0,
+                  "out": "b Fernandez"
+                },
+                {
+                  "name": "Bilal Ahmed",
+                  "runs": 18,
+                  "balls": 14,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "c Rossi b Diaz"
+                },
+                {
+                  "name": "Omar Sheikh",
+                  "runs": 10,
+                  "balls": 9,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "b Vega"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Carlos Fernandez",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 30,
+                  "wickets": 2,
+                  "economy": 7.5
+                },
+                {
+                  "name": "Miguel Vega",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 35,
+                  "wickets": 2,
+                  "economy": 8.75
+                },
+                {
+                  "name": "Luis Diaz",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 40,
+                  "wickets": 2,
+                  "economy": 10.0
+                },
+                {
+                  "name": "Marco Rossi",
+                  "overs": 4,
+                  "maidens": 1,
+                  "runs": 30,
+                  "wickets": 1,
+                  "economy": 7.5
+                },
+                {
+                  "name": "Ivan Petrov",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 29,
+                  "wickets": 1,
+                  "economy": 7.25
+                }
+              ],
+              "fielding": [
+                { "name": "Luis Diaz", "catches": 1, "runouts": 0 },
+                { "name": "Marco Rossi", "catches": 1, "runouts": 0 }
+              ]
+            },
+            {
+              "battingTeam": "Lightning Lions",
+              "total": 165,
+              "wickets": 5,
+              "overs": 18.4,
+              "batting": [
+                {
+                  "name": "Carlos Fernandez",
+                  "runs": 60,
+                  "balls": 44,
+                  "fours": 7,
+                  "sixes": 2,
+                  "out": "b Shah"
+                },
+                {
+                  "name": "Miguel Vega",
+                  "runs": 38,
+                  "balls": 30,
+                  "fours": 4,
+                  "sixes": 1,
+                  "out": "c Kumar b Ali"
+                },
+                {
+                  "name": "Marco Rossi",
+                  "runs": 28,
+                  "balls": 22,
+                  "fours": 3,
+                  "sixes": 0,
+                  "out": "b Iqbal"
+                },
+                {
+                  "name": "Luis Diaz",
+                  "runs": 22,
+                  "balls": 16,
+                  "fours": 2,
+                  "sixes": 1,
+                  "out": "not out"
+                },
+                {
+                  "name": "Ivan Petrov",
+                  "runs": 10,
+                  "balls": 8,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "b Ali"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Amir Shah",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 35,
+                  "wickets": 1,
+                  "economy": 8.75
+                },
+                {
+                  "name": "Hassan Ali",
+                  "overs": 3.4,
+                  "maidens": 0,
+                  "runs": 30,
+                  "wickets": 2,
+                  "economy": 8.18
+                },
+                {
+                  "name": "Farhan Iqbal",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 38,
+                  "wickets": 1,
+                  "economy": 9.5
+                }
+              ],
+              "fielding": [{ "name": "Raj Kumar", "catches": 1, "runouts": 0 }]
+            }
+          ]
+        },
+        {
+          "id": "M003",
+          "date": "2023-05-01",
+          "venue": "City Arena",
+          "team1": "Thunder Eagles",
+          "team2": "Storm Warriors",
+          "toss": "Thunder Eagles",
+          "elected": "bat",
+          "result": "No result (Rain)",
+          "winner": null,
+          "innings": [
+            {
+              "battingTeam": "Thunder Eagles",
+              "total": 95,
+              "wickets": 3,
+              "overs": 10,
+              "batting": [
+                {
+                  "name": "Malik Hassan",
+                  "runs": 38,
+                  "balls": 28,
+                  "fours": 4,
+                  "sixes": 1,
+                  "out": "c Shah b Kumar"
+                },
+                {
+                  "name": "James Ali",
+                  "runs": 25,
+                  "balls": 20,
+                  "fours": 3,
+                  "sixes": 0,
+                  "out": "b Iqbal"
+                },
+                {
+                  "name": "Tom Jones",
+                  "runs": 20,
+                  "balls": 15,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "not out"
+                },
+                {
+                  "name": "Chris Thompson",
+                  "runs": 12,
+                  "balls": 9,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "not out"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Raj Kumar",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 32,
+                  "wickets": 1,
+                  "economy": 8.0
+                },
+                {
+                  "name": "Farhan Iqbal",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 28,
+                  "wickets": 1,
+                  "economy": 9.33
+                },
+                {
+                  "name": "Amir Shah",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 35,
+                  "wickets": 1,
+                  "economy": 11.67
+                }
+              ],
+              "fielding": [{ "name": "Amir Shah", "catches": 1, "runouts": 0 }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S2026",
+      "name": "Season 2026",
+      "matches": [
+        {
+          "id": "M004",
+          "date": "2024-03-15",
+          "venue": "National Stadium",
+          "team1": "Royal Strikers",
+          "team2": "Storm Warriors",
+          "toss": "Storm Warriors",
+          "elected": "field",
+          "result": "Royal Strikers won by 8 wickets",
+          "winner": "Royal Strikers",
+          "innings": [
+            {
+              "battingTeam": "Storm Warriors",
+              "total": 142,
+              "wickets": 10,
+              "overs": 18.3,
+              "batting": [
+                {
+                  "name": "Raj Kumar",
+                  "runs": 448,
+                  "balls": 38,
+                  "fours": 5,
+                  "sixes": 1,
+                  "out": "c Sharma b Kumar"
+                },
+                {
+                  "name": "Amir Shah",
+                  "runs": 132,
+                  "balls": 28,
+                  "fours": 3,
+                  "sixes": 0,
+                  "out": "b Nair"
+                },
+                {
+                  "name": "Hassan Ali",
+                  "runs": 22,
+                  "balls": 20,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "b Kapoor"
+                },
+                {
+                  "name": "Bilal Ahmed",
+                  "runs": 18,
+                  "balls": 15,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "c Patel b Singh"
+                },
+                {
+                  "name": "Omar Sheikh",
+                  "runs": 10,
+                  "balls": 8,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "b Nair"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Suresh Kumar",
+                  "overs": 4,
+                  "maidens": 1,
+                  "runs": 25,
+                  "wickets": 2,
+                  "economy": 6.25
+                },
+                {
+                  "name": "Vikram Nair",
+                  "overs": 3.3,
+                  "maidens": 0,
+                  "runs": 28,
+                  "wickets": 2,
+                  "economy": 8.0
+                },
+                {
+                  "name": "Priya Kapoor",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 32,
+                  "wickets": 1,
+                  "economy": 8.0
+                },
+                {
+                  "name": "Dev Singh",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 30,
+                  "wickets": 2,
+                  "economy": 7.5
+                },
+                {
+                  "name": "Kiran Mehta",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 27,
+                  "wickets": 2,
+                  "economy": 9.0
+                }
+              ],
+              "fielding": [
+                { "name": "Arjun Sharma", "catches": 1, "runouts": 0 },
+                { "name": "Rohan Patel", "catches": 1, "runouts": 0 }
+              ]
+            },
+            {
+              "battingTeam": "Royal Strikers",
+              "total": 143,
+              "wickets": 2,
+              "overs": 16.2,
+              "batting": [
+                {
+                  "name": "Arjun Sharma",
+                  "runs": 78,
+                  "balls": 54,
+                  "fours": 9,
+                  "sixes": 3,
+                  "out": "b Iqbal"
+                },
+                {
+                  "name": "Rohan Patel",
+                  "runs": 44,
+                  "balls": 38,
+                  "fours": 5,
+                  "sixes": 1,
+                  "out": "not out"
+                },
+                {
+                  "name": "Dev Singh",
+                  "runs": 15,
+                  "balls": 10,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "not out"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Farhan Iqbal",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 35,
+                  "wickets": 1,
+                  "economy": 8.75
+                },
+                {
+                  "name": "Amir Shah",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 32,
+                  "wickets": 1,
+                  "economy": 8.0
+                },
+                {
+                  "name": "Hassan Ali",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 38,
+                  "wickets": 0,
+                  "economy": 9.5
+                }
+              ],
+              "fielding": []
+            }
+          ]
+        },
+        {
+          "id": "M005",
+          "date": "2024-03-22",
+          "venue": "Green Park Stadium",
+          "team1": "Thunder Eagles",
+          "team2": "Lightning Lions",
+          "toss": "Lightning Lions",
+          "elected": "bat",
+          "result": "Thunder Eagles won by 22 runs",
+          "winner": "Thunder Eagles",
+          "innings": [
+            {
+              "battingTeam": "Lightning Lions",
+              "total": 175,
+              "wickets": 8,
+              "overs": 20,
+              "batting": [
+                {
+                  "name": "Carlos Fernandez",
+                  "runs": 65,
+                  "balls": 48,
+                  "fours": 7,
+                  "sixes": 2,
+                  "out": "c Thompson b Hassan"
+                },
+                {
+                  "name": "Miguel Vega",
+                  "runs": 42,
+                  "balls": 35,
+                  "fours": 4,
+                  "sixes": 1,
+                  "out": "b Ali"
+                },
+                {
+                  "name": "Luis Diaz",
+                  "runs": 28,
+                  "balls": 22,
+                  "fours": 3,
+                  "sixes": 0,
+                  "out": "b Hassan"
+                },
+                {
+                  "name": "Marco Rossi",
+                  "runs": 18,
+                  "balls": 14,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "c Jones b Wright"
+                },
+                {
+                  "name": "Ivan Petrov",
+                  "runs": 12,
+                  "balls": 9,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "b Clarke"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Malik Hassan",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 32,
+                  "wickets": 2,
+                  "economy": 8.0
+                },
+                {
+                  "name": "James Ali",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 38,
+                  "wickets": 1,
+                  "economy": 9.5
+                },
+                {
+                  "name": "Sam Wright",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 40,
+                  "wickets": 2,
+                  "economy": 10.0
+                },
+                {
+                  "name": "Ben Clarke",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 35,
+                  "wickets": 1,
+                  "economy": 8.75
+                },
+                {
+                  "name": "Chris Thompson",
+                  "overs": 4,
+                  "maidens": 1,
+                  "runs": 30,
+                  "wickets": 1,
+                  "economy": 7.5
+                }
+              ],
+              "fielding": [
+                { "name": "Chris Thompson", "catches": 1, "runouts": 0 },
+                { "name": "Tom Jones", "catches": 1, "runouts": 0 }
+              ]
+            },
+            {
+              "battingTeam": "Thunder Eagles",
+              "total": 197,
+              "wickets": 5,
+              "overs": 20,
+              "batting": [
+                {
+                  "name": "Malik Hassan",
+                  "runs": 88,
+                  "balls": 58,
+                  "fours": 10,
+                  "sixes": 4,
+                  "out": "c Fernandez b Vega"
+                },
+                {
+                  "name": "James Ali",
+                  "runs": 50,
+                  "balls": 40,
+                  "fours": 5,
+                  "sixes": 2,
+                  "out": "not out"
+                },
+                {
+                  "name": "Tom Jones",
+                  "runs": 28,
+                  "balls": 22,
+                  "fours": 3,
+                  "sixes": 0,
+                  "out": "b Diaz"
+                },
+                {
+                  "name": "Chris Thompson",
+                  "runs": 18,
+                  "balls": 13,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "c Rossi b Cruz"
+                }
+              ],
+              "bowling": [
+                {
+                  "name": "Carlos Fernandez",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 42,
+                  "wickets": 0,
+                  "economy": 10.5
+                },
+                {
+                  "name": "Miguel Vega",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 38,
+                  "wickets": 1,
+                  "economy": 9.5
+                },
+                {
+                  "name": "Luis Diaz",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 40,
+                  "wickets": 1,
+                  "economy": 10.0
+                },
+                {
+                  "name": "Ivan Petrov",
+                  "overs": 4,
+                  "maidens": 0,
+                  "runs": 45,
+                  "wickets": 1,
+                  "economy": 11.25
+                }
+              ],
+              "fielding": [
+                { "name": "Carlos Fernandez", "catches": 1, "runouts": 0 },
+                { "name": "Marco Rossi", "catches": 1, "runouts": 0 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
