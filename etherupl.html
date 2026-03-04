@@ -1,0 +1,2141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EPL</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="web.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">🏏 Etheru <em> Premier League</em></div>
+      <div class="sel-wrap">
+        <span class="sel-label">Season</span>
+        <select id="season-select"></select>
+      </div>
+        <nav>
+          <button class="nav-btn active" onclick="showPanel('overview')">
+            Overview
+          </button>
+          <button class="nav-btn" onclick="showPanel('teams')">Teams</button>
+                    <button class="nav-btn" onclick="showPanel('matches')">
+            Matches
+          </button>
+          <button class="nav-btn" onclick="showPanel('standings')">
+            Standings
+          </button>
+          <button class="nav-btn" onclick="showPanel('performers')">
+            Top Performers
+          </button>
+        </nav>
+  
+    </header>
+
+    <main>
+      <div id="loading-state">
+        <div class="spinner"></div>
+        <div style="color: var(--muted); font-size: 0.88rem">
+          Loading EPL data…
+        </div>
+      </div>
+      <div id="error-state">
+        <h2
+          style="
+            font-family: &quot;Playfair Display&quot;, serif;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+          "
+        >
+          ⚠️ Could not load data
+        </h2>
+        <p
+          id="error-msg"
+          style="color: var(--muted); font-size: 0.88rem; margin-top: 0.4rem"
+        ></p>
+        <p style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--muted)">
+          Using demo data as fallback.
+        </p>
+      </div>
+      <div id="app" style="display: none">
+        <div id="panel-overview" class="panel active">
+          <div class="ptitle">EPL Overview</div>
+          <div class="psub">Stats calculated dynamically — season scoped</div>
+          <div id="ov-badge" class="s-badge"></div>
+          <div id="ov-cards" class="ov-grid"></div>
+          <div
+            style="
+              font-family: &quot;Barlow Condensed&quot;, sans-serif;
+              font-weight: 700;
+              font-size: 0.95rem;
+              color: var(--white);
+              margin-bottom: 0.6rem;
+            "
+          >
+            Recent Results
+          </div>
+          <div id="ov-matches" class="ml"></div>
+        </div>
+        <div id="panel-standings" class="panel">
+          <div class="ptitle">Points Table</div>
+          <div class="psub">Click a team to expand player stats</div>
+          <div id="st-badge" class="s-badge"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Team</th>
+                  <th class="c">P</th>
+                  <th class="c">W</th>
+                  <th class="c">L</th>
+                  <th class="c">NR</th>
+                  <th class="c">Pts</th>
+                  <th class="c">NRR</th>
+                  <th>Form</th>
+                </tr>
+              </thead>
+              <tbody id="st-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="panel-matches" class="panel">
+          <div class="ptitle">Matches</div>
+          <div class="psub">Click a match to expand the full scorecard</div>
+          <div id="ma-badge" class="s-badge"></div>
+          <div id="ma-list" class="ml"></div>
+        </div>
+        <div id="panel-performers" class="panel">
+          <div class="ptitle">Top Performers</div>
+          <div class="psub">
+            Season rankings auto-calculated from match data
+          </div>
+          <div id="pf-badge" class="s-badge"></div>
+          <div id="pf-grid" class="pg"></div>
+        </div>
+        <div id="panel-teams" class="panel">
+          <div class="ptitle">Teams</div>
+          <div class="psub">Season rosters and aggregated stats</div>
+          <div id="tm-badge" class="s-badge"></div>
+          <div id="tm-list"></div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      var LEAGUE = null;
+      var CUR = null; // current season
+
+      var COLORS = [
+        "#22c55e",
+        "#f59e0b",
+        "#38bdf8",
+        "#ef4444",
+        "#a78bfa",
+        "#fb923c",
+        "#34d399",
+        "#e879f9",
+      ];
+      var colorMap = {};
+      function tc(name) {
+        if (!colorMap[name])
+          colorMap[name] = COLORS[Object.keys(colorMap).length % COLORS.length];
+        return colorMap[name];
+      }
+
+      // ── FETCH ────────────────────────────────────────────────────
+      async function loadData() {
+        try {
+          var r = await fetch("league.json");
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          LEAGUE = await r.json();
+        } catch (e) {
+          document.getElementById("error-msg").textContent = e.message;
+          document.getElementById("error-state").style.display = "block";
+          // LEAGUE = sampleData();
+        }
+        init();
+      }
+
+      function init() {
+        document.getElementById("loading-state").style.display = "none";
+        document.getElementById("app").style.display = "block";
+
+        // assign colors
+        var names = {};
+        LEAGUE.seasons.forEach(function (s) {
+          s.matches.forEach(function (m) {
+            names[m.team1] = 1;
+            names[m.team2] = 1;
+          });
+        });
+        Object.keys(names)
+          .sort()
+          .forEach(function (n) {
+            tc(n);
+          });
+
+        // populate season dropdown — latest first
+        var sel = document.getElementById("season-select");
+        sel.innerHTML = "";
+        var seasons = LEAGUE.seasons.slice().reverse();
+        seasons.forEach(function (s, i) {
+          var o = document.createElement("option");
+          o.value = s.id;
+          o.textContent = s.name;
+          if (i === 0) o.selected = true;
+          sel.appendChild(o);
+        });
+        sel.onchange = function () {
+          CUR = LEAGUE.seasons.find(function (s) {
+            return s.id === sel.value;
+          });
+          renderAll();
+        };
+
+        CUR = seasons[0]; // latest
+        renderAll();
+      }
+
+      function renderAll() {
+        renderOverview();
+        renderStandings();
+        renderMatches();
+        renderPerformers();
+        renderTeams();
+      }
+
+      // ── NAVIGATION ───────────────────────────────────────────────
+      function showPanel(id) {
+        document.querySelectorAll(".panel").forEach(function (p) {
+          p.classList.remove("active");
+        });
+        document.querySelectorAll(".nav-btn").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        document.getElementById("panel-" + id).classList.add("active");
+        document
+          .querySelector(".nav-btn[onclick=\"showPanel('" + id + "')\"]")
+          .classList.add("active");
+      }
+
+      function badge(id) {
+        document.getElementById(id).textContent = "📅 " + CUR.name;
+      }
+
+      // ── ENGINE ───────────────────────────────────────────────────
+      function SM() {
+        return CUR.matches || [];
+      }
+
+      function seasonTeams() {
+        var s = {};
+        SM().forEach(function (m) {
+          s[m.team1] = 1;
+          s[m.team2] = 1;
+        });
+        return Object.keys(s).sort();
+      }
+
+      function playersForTeam(team) {
+        var s = {};
+        SM().forEach(function (m) {
+          m.innings.forEach(function (inn) {
+            if (inn.battingTeam === team) {
+              inn.batting.forEach(function (b) {
+                s[b.name] = 1;
+              });
+            } else {
+              inn.bowling.forEach(function (b) {
+                s[b.name] = 1;
+              });
+              (inn.fielding || []).forEach(function (f) {
+                s[f.name] = 1;
+              });
+            }
+          });
+        });
+        return Object.keys(s);
+      }
+
+      function batStats(name) {
+        var inns = 0,
+          runs = 0,
+          balls = 0,
+          fours = 0,
+          sixes = 0,
+          hs = 0,
+          no = 0,
+          f50 = 0,
+          f100 = 0;
+        SM().forEach(function (m) {
+          m.innings.forEach(function (inn) {
+            inn.batting.forEach(function (b) {
+              if (b.name !== name) return;
+              inns++;
+              runs += b.runs;
+              balls += b.balls;
+              fours += b.fours;
+              sixes += b.sixes;
+              if (b.runs > hs) hs = b.runs;
+              if (b.out === "not out") no++;
+              if (b.runs >= 100) f100++;
+              else if (b.runs >= 50) f50++;
+            });
+          });
+        });
+        var d = inns - no;
+        return {
+          inns: inns,
+          runs: runs,
+          balls: balls,
+          fours: fours,
+          sixes: sixes,
+          hs: hs,
+          f50: f50,
+          f100: f100,
+          avg: d > 0 ? (runs / d).toFixed(1) : runs > 0 ? "N/O" : "-",
+          sr: balls > 0 ? ((runs / balls) * 100).toFixed(1) : "-",
+        };
+      }
+
+      function bowlStats(name) {
+        var inns = 0,
+          ov = 0,
+          runs = 0,
+          wkts = 0,
+          mai = 0,
+          bW = 0,
+          bR = 9999;
+        SM().forEach(function (m) {
+          m.innings.forEach(function (inn) {
+            inn.bowling.forEach(function (b) {
+              if (b.name !== name) return;
+              inns++;
+              ov += b.overs;
+              runs += b.runs;
+              wkts += b.wickets;
+              mai += b.maidens;
+              if (b.wickets > bW || (b.wickets === bW && b.runs < bR)) {
+                bW = b.wickets;
+                bR = b.runs;
+              }
+            });
+          });
+        });
+        return {
+          inns: inns,
+          overs: ov.toFixed(1),
+          runs: runs,
+          wkts: wkts,
+          maidens: mai,
+          eco: ov > 0 ? (runs / ov).toFixed(2) : "-",
+          avg: wkts > 0 ? (runs / wkts).toFixed(1) : "-",
+          best: bW > 0 ? bW + "/" + bR : "-",
+        };
+      }
+
+      function fldStats(name) {
+        var c = 0,
+          r = 0;
+        SM().forEach(function (m) {
+          m.innings.forEach(function (inn) {
+            (inn.fielding || []).forEach(function (f) {
+              if (f.name !== name) return;
+              c += f.catches;
+              r += f.runouts;
+            });
+          });
+        });
+        return { catches: c, runouts: r, total: c + r };
+      }
+
+      function standings() {
+        var T = {};
+        seasonTeams().forEach(function (t) {
+          T[t] = {
+            name: t,
+            p: 0,
+            w: 0,
+            l: 0,
+            nr: 0,
+            pts: 0,
+            rf: 0,
+            ra: 0,
+            of: 0,
+            oa: 0,
+            form: [],
+          };
+        });
+        SM().forEach(function (m) {
+          var t1 = T[m.team1],
+            t2 = T[m.team2];
+          if (!t1 || !t2) return;
+          t1.p++;
+          t2.p++;
+          if (!m.winner) {
+            t1.nr++;
+            t2.nr++;
+            t1.pts++;
+            t2.pts++;
+            t1.form.push("N");
+            t2.form.push("N");
+          } else if (m.winner === m.team1) {
+            t1.w++;
+            t1.pts += 2;
+            t1.form.push("W");
+            t2.l++;
+            t2.form.push("L");
+          } else {
+            t2.w++;
+            t2.pts += 2;
+            t2.form.push("W");
+            t1.l++;
+            t1.form.push("L");
+          }
+          m.innings.forEach(function (inn) {
+            var ov = inn.overs || 20;
+            if (inn.battingTeam === m.team1) {
+              t1.rf += inn.total;
+              t1.of += ov;
+              t2.ra += inn.total;
+              t2.oa += ov;
+            } else {
+              t2.rf += inn.total;
+              t2.of += ov;
+              t1.ra += inn.total;
+              t1.oa += ov;
+            }
+          });
+        });
+        return Object.values(T)
+          .map(function (t) {
+            var nrr =
+              t.of > 0 && t.oa > 0
+                ? (t.rf / t.of - t.ra / t.oa).toFixed(3)
+                : "0.000";
+            return Object.assign({}, t, { nrr: nrr });
+          })
+          .sort(function (a, b) {
+            return b.pts - a.pts || parseFloat(b.nrr) - parseFloat(a.nrr);
+          });
+      }
+
+      function topPerformers() {
+        var bat = {},
+          bow = {},
+          fld = {};
+        SM().forEach(function (m) {
+          m.innings.forEach(function (inn) {
+            var bowTeam = inn.battingTeam === m.team1 ? m.team2 : m.team1;
+            inn.batting.forEach(function (b) {
+              if (!bat[b.name])
+                bat[b.name] = {
+                  name: b.name,
+                  team: inn.battingTeam,
+                  runs: 0,
+                  sixes: 0,
+                };
+              bat[b.name].runs += b.runs;
+              bat[b.name].sixes += b.sixes;
+            });
+            inn.bowling.forEach(function (b) {
+              if (!bow[b.name])
+                bow[b.name] = {
+                  name: b.name,
+                  team: bowTeam,
+                  wkts: 0,
+                  runs: 0,
+                  overs: 0,
+                  inns: 0,
+                };
+              bow[b.name].wkts += b.wickets;
+              bow[b.name].runs += b.runs;
+              bow[b.name].overs += b.overs;
+              bow[b.name].inns++;
+            });
+            (inn.fielding || []).forEach(function (f) {
+              if (!fld[f.name])
+                fld[f.name] = {
+                  name: f.name,
+                  team: bowTeam,
+                  catches: 0,
+                  ro: 0,
+                };
+              fld[f.name].catches += f.catches;
+              fld[f.name].ro += f.runouts;
+            });
+          });
+        });
+        function top5(arr, key, asc) {
+          return arr
+            .slice()
+            .sort(function (a, b) {
+              return asc
+                ? parseFloat(a[key]) - parseFloat(b[key])
+                : parseFloat(b[key]) - parseFloat(a[key]);
+            })
+            .slice(0, 5);
+        }
+        var ba = Object.values(bat);
+        var bw = Object.values(bow).map(function (p) {
+          return Object.assign({}, p, {
+            eco: p.overs > 0 ? (p.runs / p.overs).toFixed(2) : "99",
+          });
+        });
+        var fl = Object.values(fld).map(function (p) {
+          return Object.assign({}, p, { total: p.catches + p.ro });
+        });
+        return {
+          runs: top5(ba, "runs", false),
+          sixes: top5(ba, "sixes", false),
+          wkts: top5(bw, "wkts", false),
+          eco: top5(
+            bw.filter(function (p) {
+              return p.inns >= 2;
+            }),
+            "eco",
+            true,
+          ),
+          field: top5(fl, "total", false),
+        };
+      }
+
+      // ── MATCH CARD (DOM-based, no innerHTML for click targets) ───
+      function buildMatchCard(m) {
+        var wrap = document.createElement("div");
+        wrap.className = "mc";
+
+        // ── Header ──
+        var hdr = document.createElement("div");
+        hdr.className = "mc-h";
+
+        var lft = document.createElement("div");
+        var lTeam = document.createElement("div");
+        lTeam.className = "mc-team mc-l";
+        lTeam.style.color = tc(m.team1);
+        lTeam.textContent = m.team1;
+        var lDate = document.createElement("div");
+        lDate.className = "mc-meta";
+        lDate.textContent = "📅 " + m.date;
+        lft.appendChild(lTeam);
+        lft.appendChild(lDate);
+
+        var ctr = document.createElement("div");
+        ctr.className = "mc-c";
+        var scoresDiv = document.createElement("div");
+        scoresDiv.className = "mc-scores";
+        m.innings.forEach(function (inn, i) {
+          if (i > 0) {
+            var sep = document.createElement("small");
+            sep.textContent = " vs ";
+            scoresDiv.appendChild(sep);
+          }
+          scoresDiv.appendChild(
+            document.createTextNode(inn.total + "/" + inn.wickets + " "),
+          );
+          var sm = document.createElement("small");
+          sm.textContent = "(" + inn.overs + "ov)";
+          scoresDiv.appendChild(sm);
+        });
+        var resDiv = document.createElement("div");
+        resDiv.className = "mc-result";
+        resDiv.textContent = m.result;
+        ctr.appendChild(scoresDiv);
+        ctr.appendChild(resDiv);
+
+        var rgt = document.createElement("div");
+        rgt.style.textAlign = "right";
+        var rTeam = document.createElement("div");
+        rTeam.className = "mc-team mc-r";
+        rTeam.style.color = tc(m.team2);
+        rTeam.textContent = m.team2;
+        var rVenue = document.createElement("div");
+        rVenue.className = "mc-meta";
+        rVenue.textContent = "📍 " + (m.venue || "");
+        rgt.appendChild(rTeam);
+        rgt.appendChild(rVenue);
+
+        var tog = document.createElement("div");
+        tog.className = "mc-tog";
+        tog.textContent = "▼";
+
+        hdr.appendChild(lft);
+        hdr.appendChild(ctr);
+        hdr.appendChild(rgt);
+        hdr.appendChild(tog);
+
+        // ── Body ──
+        var body = document.createElement("div");
+        body.className = "mc-body";
+
+        // ── Click handler — directly on hdr element ──
+        hdr.addEventListener("click", function () {
+          if (!body.hasChildNodes()) {
+            body.appendChild(buildMatchBody(m));
+          }
+          var open = body.classList.toggle("open");
+          tog.textContent = open ? "▲" : "▼";
+        });
+
+        wrap.appendChild(hdr);
+        wrap.appendChild(body);
+        return wrap;
+      }
+
+      function buildMatchBody(m) {
+        var inner = document.createElement("div");
+        inner.className = "mc-inner";
+
+        if (!m.innings || !m.innings.length) {
+          inner.innerHTML = '<div class="empty">No scorecard data</div>';
+          return inner;
+        }
+
+        var tabBar = document.createElement("div");
+        tabBar.className = "itabs";
+
+        var allPanes = [];
+
+        function activatePane(pane, btn) {
+          allPanes.forEach(function (p) {
+            p.classList.remove("active");
+          });
+          tabBar.querySelectorAll(".itab").forEach(function (b) {
+            b.classList.remove("active");
+          });
+          pane.classList.add("active");
+          btn.classList.add("active");
+        }
+
+        m.innings.forEach(function (inn, i) {
+          var btn = document.createElement("button");
+          btn.className = "itab" + (i === 0 ? " active" : "");
+          btn.textContent = inn.battingTeam + " Inn " + (i + 1);
+
+          var pane = document.createElement("div");
+          pane.className = "itab-b" + (i === 0 ? " active" : "");
+          pane.innerHTML = buildInningsHTML(inn);
+
+          allPanes.push(pane);
+          btn.addEventListener("click", function () {
+            activatePane(pane, btn);
+          });
+          tabBar.appendChild(btn);
+          inner.appendChild(pane);
+        });
+
+        // Highlights tab
+        var hlBtn = document.createElement("button");
+        hlBtn.className = "itab";
+        hlBtn.textContent = "✨ Highlights";
+        var hlPane = document.createElement("div");
+        hlPane.className = "itab-b";
+        hlPane.innerHTML = buildHighlightsHTML(m);
+        allPanes.push(hlPane);
+        hlBtn.addEventListener("click", function () {
+          activatePane(hlPane, hlBtn);
+        });
+        tabBar.appendChild(hlBtn);
+        inner.appendChild(hlPane);
+
+        // Insert tabBar at the top
+        inner.insertBefore(tabBar, inner.firstChild);
+        return inner;
+      }
+
+      function buildInningsHTML(inn) {
+        var h =
+          '<div class="inn-h"><div class="inn-team">' +
+          inn.battingTeam +
+          "</div>" +
+          '<div class="inn-total">' +
+          inn.total +
+          "/" +
+          inn.wickets +
+          " (" +
+          inn.overs +
+          " ov)</div></div>";
+
+        h +=
+          '<div class="subh">Batting</div><div class="mwrap"><table class="mt"><thead><tr>' +
+          "<th>Batter</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th><th>Dismissal</th>" +
+          "</tr></thead><tbody>";
+        inn.batting.forEach(function (b) {
+          var sr = b.balls > 0 ? ((b.runs / b.balls) * 100).toFixed(1) : "-";
+          var no = b.out === "not out";
+          h +=
+            "<tr>" +
+            "<td" +
+            (no ? ' style="color:var(--green)"' : "") +
+            ">" +
+            b.name +
+            (no ? " *" : "") +
+            "</td>" +
+            '<td style="font-weight:700;color:' +
+            (b.runs >= 50 ? "var(--gold)" : "inherit") +
+            '">' +
+            b.runs +
+            "</td>" +
+            "<td>" +
+            b.balls +
+            "</td><td>" +
+            b.fours +
+            "</td><td>" +
+            b.sixes +
+            "</td><td>" +
+            sr +
+            "</td>" +
+            '<td style="color:var(--muted);font-size:.74rem">' +
+            b.out +
+            "</td>" +
+            "</tr>";
+        });
+        h += "</tbody></table></div>";
+
+        h +=
+          '<div class="subh">Bowling</div><div class="mwrap"><table class="mt"><thead><tr>' +
+          "<th>Bowler</th><th>O</th><th>M</th><th>R</th><th>W</th><th>Eco</th>" +
+          "</tr></thead><tbody>";
+        inn.bowling.forEach(function (b) {
+          h +=
+            "<tr><td>" +
+            b.name +
+            "</td><td>" +
+            b.overs +
+            "</td><td>" +
+            b.maidens +
+            "</td>" +
+            "<td>" +
+            b.runs +
+            "</td>" +
+            '<td style="font-weight:700;color:' +
+            (b.wickets >= 3 ? "var(--green)" : "inherit") +
+            '">' +
+            b.wickets +
+            "</td>" +
+            "<td>" +
+            b.economy +
+            "</td></tr>";
+        });
+        h += "</tbody></table></div>";
+
+        if (inn.fielding && inn.fielding.length) {
+          h +=
+            '<div class="subh">Fielding</div><div class="mwrap"><table class="mt"><thead><tr>' +
+            "<th>Fielder</th><th>Catches</th><th>Run Outs</th></tr></thead><tbody>";
+          inn.fielding.forEach(function (f) {
+            h +=
+              "<tr><td>" +
+              f.name +
+              "</td><td>" +
+              f.catches +
+              "</td><td>" +
+              f.runouts +
+              "</td></tr>";
+          });
+          h += "</tbody></table></div>";
+        }
+        return h;
+      }
+
+      function buildHighlightsHTML(m) {
+        var chips = [];
+        m.innings.forEach(function (inn) {
+          inn.batting.forEach(function (b) {
+            if (b.runs >= 100)
+              chips.push({
+                g: true,
+                t: "💯 Century",
+                s: b.name + " — " + b.runs + " (" + b.balls + "b)",
+              });
+            else if (b.runs >= 50)
+              chips.push({
+                g: true,
+                t: "⭐ Fifty",
+                s: b.name + " — " + b.runs + " (" + b.balls + "b)",
+              });
+            if (b.sixes >= 3)
+              chips.push({
+                g: false,
+                t: "💥 " + b.sixes + " Sixes",
+                s: b.name,
+              });
+          });
+          inn.bowling.forEach(function (b) {
+            if (b.wickets >= 3)
+              chips.push({
+                g: true,
+                t: "🎯 " + b.wickets + "-for",
+                s: b.name + " " + b.wickets + "/" + b.runs,
+              });
+            if (b.maidens >= 1)
+              chips.push({ g: false, t: "🔒 Maiden", s: b.name });
+          });
+        });
+        if (!chips.length) chips.push({ g: false, t: "Result", s: m.result });
+        var h = '<div class="subh">Match Highlights</div><div class="hlg">';
+        chips.forEach(function (c) {
+          h +=
+            '<div class="chip' +
+            (c.g ? " gold" : "") +
+            '"><strong>' +
+            c.t +
+            ":</strong> " +
+            c.s +
+            "</div>";
+        });
+        h +=
+          '</div><div style="color:var(--muted);font-size:.78rem">' +
+          '🏟️ <strong style="color:var(--text)">' +
+          (m.venue || "—") +
+          "</strong> &nbsp;|&nbsp; " +
+          '🎲 Toss: <strong style="color:var(--text)">' +
+          (m.toss || "—") +
+          "</strong> elected to " +
+          '<strong style="color:var(--text)">' +
+          (m.elected || "—") +
+          "</strong></div>";
+        return h;
+      }
+
+      // ── RENDER OVERVIEW ──────────────────────────────────────────
+      function renderOverview() {
+        badge("ov-badge");
+        var ms = SM();
+        var done = ms.filter(function (m) {
+          return m.winner;
+        });
+        var runs = ms.reduce(function (a, m) {
+          return (
+            a +
+            m.innings.reduce(function (b, i) {
+              return b + i.total;
+            }, 0)
+          );
+        }, 0);
+        var pf = topPerformers();
+        var cards = [
+          { l: "Matches", v: ms.length, s: done.length + " completed" },
+          { l: "Teams", v: seasonTeams().length, s: "This season" },
+          { l: "Total Runs", v: runs.toLocaleString(), s: "All innings" },
+          {
+            l: "Top Scorer",
+            v: pf.runs[0] ? pf.runs[0].runs : "-",
+            s: pf.runs[0] ? pf.runs[0].name : "N/A",
+          },
+          {
+            l: "Top Wickets",
+            v: pf.wkts[0] ? pf.wkts[0].wkts : "-",
+            s: pf.wkts[0] ? pf.wkts[0].name : "N/A",
+          },
+        ];
+        document.getElementById("ov-cards").innerHTML = cards
+          .map(function (c) {
+            return (
+              '<div class="ov-card"><div class="ov-label">' +
+              c.l +
+              '</div><div class="ov-val">' +
+              c.v +
+              '</div><div class="ov-sub">' +
+              c.s +
+              "</div></div>"
+            );
+          })
+          .join("");
+
+        var recent = ms
+          .slice()
+          .sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+          })
+          .slice(0, 5);
+        var ovEl = document.getElementById("ov-matches");
+        ovEl.innerHTML = "";
+        if (!recent.length) {
+          ovEl.innerHTML = '<div class="empty">No matches</div>';
+        } else {
+          recent.forEach(function (m) {
+            ovEl.appendChild(buildMatchCard(m));
+          });
+        }
+      }
+
+      // ── RENDER STANDINGS ─────────────────────────────────────────
+      function renderStandings() {
+        badge("st-badge");
+        var rows = standings();
+        var html = "";
+        rows.forEach(function (t, i) {
+          var clr = tc(t.name);
+          var rc = i === 0 ? "g" : i === 1 ? "s" : i === 2 ? "b" : "";
+          var form = t.form
+            .slice(-5)
+            .map(function (r) {
+              return (
+                '<div class="fd fd-' +
+                (r === "W" ? "w" : r === "L" ? "l" : "n") +
+                '">' +
+                r +
+                "</div>"
+              );
+            })
+            .join("");
+          var nn = parseFloat(t.nrr);
+          var nrr =
+            nn >= 0
+              ? '<span class="nrr-p">+' + Math.abs(nn).toFixed(3) + "</span>"
+              : '<span class="nrr-n">-' + Math.abs(nn).toFixed(3) + "</span>";
+          var k = t.name.replace(/\s+/g, "-");
+          html +=
+            "<tr>" +
+            '<td><span class="rbadge ' +
+            rc +
+            '">' +
+            (i + 1) +
+            "</span></td>" +
+            '<td><div class="cteam" onclick="togTeamExp(\'' +
+            t.name +
+            "')\">" +
+            '<span class="tdot" style="background:' +
+            clr +
+            '"></span>' +
+            '<span class="tn">' +
+            t.name +
+            "</span>" +
+            '<span style="font-size:.68rem;color:var(--muted)">▼</span></div></td>' +
+            '<td class="c">' +
+            t.p +
+            '</td><td class="c">' +
+            t.w +
+            "</td>" +
+            '<td class="c">' +
+            t.l +
+            '</td><td class="c">' +
+            t.nr +
+            "</td>" +
+            '<td class="c pts">' +
+            t.pts +
+            '</td><td class="c">' +
+            nrr +
+            "</td>" +
+            '<td><div class="form-dots">' +
+            form +
+            "</div></td>" +
+            "</tr>" +
+            '<tr class="texp-row"><td colspan="9">' +
+            '<div class="texp-inner" id="exp-in-' +
+            k +
+            '"></div>' +
+            "</td></tr>";
+        });
+        document.getElementById("st-body").innerHTML =
+          html || '<tr><td colspan="9" class="empty">No data</td></tr>';
+      }
+
+      function togTeamExp(name) {
+        var k = name.replace(/\s+/g, "-");
+        var el = document.getElementById("exp-in-" + k);
+        if (!el) return;
+        var open = el.classList.contains("open");
+        document.querySelectorAll(".texp-inner.open").forEach(function (e) {
+          e.classList.remove("open");
+        });
+        if (open) return;
+        el.innerHTML = teamTabsHTML(name, k);
+        el.classList.add("open");
+      }
+
+      function teamTabsHTML(name, k) {
+        return (
+          '<div class="etabs">' +
+          '<button class="etab active" onclick="swETab(\'' +
+          k +
+          "','bat',this)\">🏏 Batting</button>" +
+          '<button class="etab" onclick="swETab(\'' +
+          k +
+          "','bowl',this)\">🎯 Bowling</button>" +
+          '<button class="etab" onclick="swETab(\'' +
+          k +
+          "','fld',this)\">🧤 Fielding</button>" +
+          "</div>" +
+          '<div id="et-' +
+          k +
+          '-bat" class="etab-c active">' +
+          batTable(name) +
+          "</div>" +
+          '<div id="et-' +
+          k +
+          '-bowl" class="etab-c">' +
+          bowlTable(name) +
+          "</div>" +
+          '<div id="et-' +
+          k +
+          '-fld" class="etab-c">' +
+          fldTable(name) +
+          "</div>"
+        );
+      }
+
+      function swETab(k, tab, btn) {
+        var root = btn.closest(".texp-inner, .tcard-b");
+        root.querySelectorAll(".etab").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        btn.classList.add("active");
+        ["bat", "bowl", "fld"].forEach(function (t) {
+          var el = document.getElementById("et-" + k + "-" + t);
+          if (el) el.classList.toggle("active", t === tab);
+        });
+      }
+
+      function batTable(name) {
+        var rows = playersForTeam(name)
+          .map(function (p) {
+            var s = batStats(p);
+            if (s.inns === 0) return "";
+            return (
+              "<tr><td>" +
+              p +
+              "</td><td>" +
+              s.inns +
+              "</td><td>" +
+              s.runs +
+              "</td><td>" +
+              s.hs +
+              "</td>" +
+              "<td>" +
+              s.avg +
+              "</td><td>" +
+              s.sr +
+              "</td><td>" +
+              s.f50 +
+              "</td><td>" +
+              s.f100 +
+              "</td>" +
+              "<td>" +
+              s.fours +
+              "</td><td>" +
+              s.sixes +
+              "</td></tr>"
+            );
+          })
+          .join("");
+        return (
+          '<div class="mwrap"><table class="mt"><thead><tr>' +
+          "<th>Player</th><th>Inn</th><th>Runs</th><th>HS</th><th>Avg</th><th>SR</th>" +
+          "<th>50s</th><th>100s</th><th>4s</th><th>6s</th>" +
+          "</tr></thead><tbody>" +
+          (rows || '<tr><td colspan="10" class="empty">No data</td></tr>') +
+          "</tbody></table></div>"
+        );
+      }
+
+      function bowlTable(name) {
+        var rows = playersForTeam(name)
+          .map(function (p) {
+            var s = bowlStats(p);
+            if (s.inns === 0) return "";
+            return (
+              "<tr><td>" +
+              p +
+              "</td><td>" +
+              s.inns +
+              "</td><td>" +
+              s.overs +
+              "</td><td>" +
+              s.maidens +
+              "</td>" +
+              "<td>" +
+              s.runs +
+              "</td><td>" +
+              s.wkts +
+              "</td><td>" +
+              s.eco +
+              "</td><td>" +
+              s.avg +
+              "</td><td>" +
+              s.best +
+              "</td></tr>"
+            );
+          })
+          .join("");
+        return (
+          '<div class="mwrap"><table class="mt"><thead><tr>' +
+          "<th>Player</th><th>Inn</th><th>Ov</th><th>M</th><th>Runs</th><th>Wkts</th><th>Eco</th><th>Avg</th><th>Best</th>" +
+          "</tr></thead><tbody>" +
+          (rows || '<tr><td colspan="9" class="empty">No data</td></tr>') +
+          "</tbody></table></div>"
+        );
+      }
+
+      function fldTable(name) {
+        var rows = playersForTeam(name)
+          .map(function (p) {
+            var s = fldStats(p);
+            if (s.total === 0) return "";
+            return (
+              "<tr><td>" +
+              p +
+              "</td><td>" +
+              s.catches +
+              "</td><td>" +
+              s.runouts +
+              "</td><td>" +
+              s.total +
+              "</td></tr>"
+            );
+          })
+          .join("");
+        return (
+          '<div class="mwrap"><table class="mt"><thead><tr>' +
+          "<th>Player</th><th>Catches</th><th>Run Outs</th><th>Total</th>" +
+          "</tr></thead><tbody>" +
+          (rows || '<tr><td colspan="4" class="empty">No data</td></tr>') +
+          "</tbody></table></div>"
+        );
+      }
+
+      // ── RENDER MATCHES ───────────────────────────────────────────
+      function renderMatches() {
+        badge("ma-badge");
+        var el = document.getElementById("ma-list");
+        el.innerHTML = "";
+        var ms = SM()
+          .slice()
+          .sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+          });
+        if (!ms.length) {
+          el.innerHTML = '<div class="empty">No matches this season</div>';
+          return;
+        }
+        ms.forEach(function (m) {
+          el.appendChild(buildMatchCard(m));
+        });
+      }
+
+      // ── RENDER PERFORMERS ────────────────────────────────────────
+      function renderPerformers() {
+        badge("pf-badge");
+        var pf = topPerformers();
+        var secs = [
+          { title: "🏏 Most Runs", data: pf.runs, key: "runs", gold: false },
+          { title: "🎯 Most Wickets", data: pf.wkts, key: "wkts", gold: true },
+          { title: "💥 Most Sixes", data: pf.sixes, key: "sixes", gold: false },
+          {
+            title: "🔒 Best Economy",
+            data: pf.eco,
+            key: "eco",
+            gold: false,
+            asc: true,
+          },
+          {
+            title: "🧤 Best Fielders",
+            data: pf.field,
+            key: "total",
+            gold: false,
+          },
+        ];
+        document.getElementById("pf-grid").innerHTML = secs
+          .map(function (s) {
+            var mx =
+              Math.max.apply(
+                null,
+                s.data.map(function (p) {
+                  return parseFloat(p[s.key]) || 0;
+                }),
+              ) || 1;
+            return (
+              '<div class="pc"><div class="pc-title">' +
+              s.title +
+              '</div><div class="pl">' +
+              s.data
+                .map(function (p, i) {
+                  var v = p[s.key];
+                  var pct = s.asc
+                    ? (1 - parseFloat(v) / mx) * 100
+                    : (parseFloat(v) / mx) * 100;
+                  return (
+                    '<div class="pr">' +
+                    '<div class="prk">' +
+                    (i + 1) +
+                    "</div>" +
+                    '<div class="pi"><div class="pn">' +
+                    p.name +
+                    '</div><div class="pt2">' +
+                    (p.team || "") +
+                    "</div></div>" +
+                    '<div class="pbb"><div class="pb" style="width:' +
+                    Math.max(pct, 4) +
+                    '%"></div></div>' +
+                    '<div class="pv' +
+                    (s.gold ? " gold" : "") +
+                    '">' +
+                    v +
+                    "</div>" +
+                    "</div>"
+                  );
+                })
+                .join("") +
+              "</div></div>"
+            );
+          })
+          .join("");
+      }
+
+      // ── RENDER TEAMS ─────────────────────────────────────────────
+      function renderTeams() {
+        badge("tm-badge");
+        var teams = seasonTeams();
+        var html = "";
+        teams.forEach(function (t) {
+          var k = t.replace(/\s+/g, "-");
+          var clr = tc(t);
+          var ms = SM().filter(function (m) {
+            return m.team1 === t || m.team2 === t;
+          });
+          var wins = ms.filter(function (m) {
+            return m.winner === t;
+          }).length;
+          var pl = playersForTeam(t);
+          html +=
+            '<div class="tcard" style="border-left:4px solid ' +
+            clr +
+            '">' +
+            '<div class="tcard-h" onclick="togTC(\'' +
+            k +
+            "')\">" +
+            '<span class="tdot" style="background:' +
+            clr +
+            ';width:11px;height:11px"></span>' +
+            '<div style="flex:1"><div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;font-size:1rem;color:var(--white)" class="tn">' +
+            t +
+            "</div>" +
+            '<div style="font-size:.72rem;color:var(--muted)">' +
+            pl.length +
+            " players · " +
+            ms.length +
+            " matches · " +
+            wins +
+            " wins</div></div>" +
+            '<span class="chevron" id="tchev-' +
+            k +
+            '">▼</span>' +
+            "</div>" +
+            '<div class="tcard-b" id="tcb-' +
+            k +
+            '">' +
+            '<div class="etabs">' +
+            '<button class="etab active" onclick="swETab(\'' +
+            k +
+            "','bat',this)\">🏏 Batting</button>" +
+            '<button class="etab" onclick="swETab(\'' +
+            k +
+            "','bowl',this)\">🎯 Bowling</button>" +
+            '<button class="etab" onclick="swETab(\'' +
+            k +
+            "','fld',this)\">🧤 Fielding</button>" +
+            "</div>" +
+            '<div id="et-' +
+            k +
+            '-bat" class="etab-c active">' +
+            batTable(t) +
+            "</div>" +
+            '<div id="et-' +
+            k +
+            '-bowl" class="etab-c">' +
+            bowlTable(t) +
+            "</div>" +
+            '<div id="et-' +
+            k +
+            '-fld" class="etab-c">' +
+            fldTable(t) +
+            "</div>" +
+            "</div></div>";
+        });
+        document.getElementById("tm-list").innerHTML =
+          html || '<div class="empty">No teams</div>';
+      }
+
+      function togTC(k) {
+        var b = document.getElementById("tcb-" + k);
+        var c = document.getElementById("tchev-" + k);
+        var open = b.classList.toggle("open");
+        c.classList.toggle("open", open);
+      }
+
+      // ── SAMPLE DATA ──────────────────────────────────────────────
+      function sampleData() {
+        return {
+          name: "Premier Cricket League",
+          seasons: [
+            {
+              id: "S2023",
+              name: "Season 2023",
+              matches: [
+                {
+                  id: "M001",
+                  date: "2023-04-10",
+                  venue: "Green Park Stadium",
+                  team1: "Royal Strikers",
+                  team2: "Thunder Eagles",
+                  toss: "Royal Strikers",
+                  elected: "bat",
+                  result: "Royal Strikers won by 34 runs",
+                  winner: "Royal Strikers",
+                  innings: [
+                    {
+                      battingTeam: "Royal Strikers",
+                      total: 187,
+                      wickets: 6,
+                      overs: 20,
+                      batting: [
+                        {
+                          name: "Arjun Sharma",
+                          runs: 72,
+                          balls: 48,
+                          fours: 8,
+                          sixes: 3,
+                          out: "c Thompson b Malik",
+                        },
+                        {
+                          name: "Rohan Patel",
+                          runs: 45,
+                          balls: 35,
+                          fours: 5,
+                          sixes: 1,
+                          out: "b Malik",
+                        },
+                        {
+                          name: "Dev Singh",
+                          runs: 30,
+                          balls: 22,
+                          fours: 3,
+                          sixes: 1,
+                          out: "run out (Jones)",
+                        },
+                        {
+                          name: "Kiran Mehta",
+                          runs: 18,
+                          balls: 14,
+                          fours: 2,
+                          sixes: 0,
+                          out: "c Jones b Ali",
+                        },
+                        {
+                          name: "Priya Kapoor",
+                          runs: 12,
+                          balls: 9,
+                          fours: 1,
+                          sixes: 0,
+                          out: "not out",
+                        },
+                        {
+                          name: "Suresh Kumar",
+                          runs: 5,
+                          balls: 4,
+                          fours: 0,
+                          sixes: 0,
+                          out: "b Ali",
+                        },
+                        {
+                          name: "Vikram Nair",
+                          runs: 5,
+                          balls: 3,
+                          fours: 0,
+                          sixes: 1,
+                          out: "not out",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Malik Hassan",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 38,
+                          wickets: 2,
+                          economy: 9.5,
+                        },
+                        {
+                          name: "James Ali",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 32,
+                          wickets: 2,
+                          economy: 8.0,
+                        },
+                        {
+                          name: "Tom Jones",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 40,
+                          wickets: 0,
+                          economy: 10.0,
+                        },
+                        {
+                          name: "Chris Thompson",
+                          overs: 4,
+                          maidens: 1,
+                          runs: 35,
+                          wickets: 1,
+                          economy: 8.75,
+                        },
+                        {
+                          name: "Sam Wright",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 42,
+                          wickets: 1,
+                          economy: 10.5,
+                        },
+                      ],
+                      fielding: [
+                        { name: "Chris Thompson", catches: 1, runouts: 0 },
+                        { name: "Tom Jones", catches: 0, runouts: 1 },
+                      ],
+                    },
+                    {
+                      battingTeam: "Thunder Eagles",
+                      total: 153,
+                      wickets: 10,
+                      overs: 19.2,
+                      batting: [
+                        {
+                          name: "Malik Hassan",
+                          runs: 43,
+                          balls: 32,
+                          fours: 4,
+                          sixes: 2,
+                          out: "c Sharma b Kumar",
+                        },
+                        {
+                          name: "James Ali",
+                          runs: 35,
+                          balls: 28,
+                          fours: 4,
+                          sixes: 1,
+                          out: "b Nair",
+                        },
+                        {
+                          name: "Tom Jones",
+                          runs: 22,
+                          balls: 20,
+                          fours: 2,
+                          sixes: 0,
+                          out: "b Kapoor",
+                        },
+                        {
+                          name: "Chris Thompson",
+                          runs: 18,
+                          balls: 15,
+                          fours: 1,
+                          sixes: 0,
+                          out: "c Patel b Singh",
+                        },
+                        {
+                          name: "Sam Wright",
+                          runs: 14,
+                          balls: 12,
+                          fours: 1,
+                          sixes: 0,
+                          out: "b Kumar",
+                        },
+                        {
+                          name: "Ben Clarke",
+                          runs: 10,
+                          balls: 9,
+                          fours: 1,
+                          sixes: 0,
+                          out: "run out (Mehta)",
+                        },
+                        {
+                          name: "Ryan Foster",
+                          runs: 5,
+                          balls: 6,
+                          fours: 0,
+                          sixes: 0,
+                          out: "b Nair",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Suresh Kumar",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 28,
+                          wickets: 2,
+                          economy: 7.0,
+                        },
+                        {
+                          name: "Vikram Nair",
+                          overs: 3.2,
+                          maidens: 0,
+                          runs: 25,
+                          wickets: 2,
+                          economy: 7.5,
+                        },
+                        {
+                          name: "Priya Kapoor",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 35,
+                          wickets: 2,
+                          economy: 8.75,
+                        },
+                        {
+                          name: "Dev Singh",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 30,
+                          wickets: 2,
+                          economy: 7.5,
+                        },
+                        {
+                          name: "Kiran Mehta",
+                          overs: 4,
+                          maidens: 1,
+                          runs: 35,
+                          wickets: 1,
+                          economy: 8.75,
+                        },
+                      ],
+                      fielding: [
+                        { name: "Arjun Sharma", catches: 2, runouts: 0 },
+                        { name: "Rohan Patel", catches: 1, runouts: 0 },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  id: "M002",
+                  date: "2023-04-17",
+                  venue: "Eden Sports Ground",
+                  team1: "Lightning Lions",
+                  team2: "Storm Warriors",
+                  toss: "Storm Warriors",
+                  elected: "field",
+                  result: "Lightning Lions won by 5 wickets",
+                  winner: "Lightning Lions",
+                  innings: [
+                    {
+                      battingTeam: "Storm Warriors",
+                      total: 164,
+                      wickets: 9,
+                      overs: 20,
+                      batting: [
+                        {
+                          name: "Raj Kumar",
+                          runs: 55,
+                          balls: 42,
+                          fours: 6,
+                          sixes: 2,
+                          out: "b Fernandez",
+                        },
+                        {
+                          name: "Amir Shah",
+                          runs: 40,
+                          balls: 33,
+                          fours: 4,
+                          sixes: 1,
+                          out: "c Diaz b Vega",
+                        },
+                        {
+                          name: "Hassan Ali",
+                          runs: 28,
+                          balls: 24,
+                          fours: 3,
+                          sixes: 0,
+                          out: "b Fernandez",
+                        },
+                        {
+                          name: "Bilal Ahmed",
+                          runs: 18,
+                          balls: 14,
+                          fours: 2,
+                          sixes: 0,
+                          out: "c Rossi b Diaz",
+                        },
+                        {
+                          name: "Omar Sheikh",
+                          runs: 10,
+                          balls: 9,
+                          fours: 1,
+                          sixes: 0,
+                          out: "b Vega",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Carlos Fernandez",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 30,
+                          wickets: 2,
+                          economy: 7.5,
+                        },
+                        {
+                          name: "Miguel Vega",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 35,
+                          wickets: 2,
+                          economy: 8.75,
+                        },
+                        {
+                          name: "Luis Diaz",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 40,
+                          wickets: 2,
+                          economy: 10.0,
+                        },
+                        {
+                          name: "Marco Rossi",
+                          overs: 4,
+                          maidens: 1,
+                          runs: 30,
+                          wickets: 1,
+                          economy: 7.5,
+                        },
+                        {
+                          name: "Ivan Petrov",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 29,
+                          wickets: 1,
+                          economy: 7.25,
+                        },
+                      ],
+                      fielding: [
+                        { name: "Luis Diaz", catches: 1, runouts: 0 },
+                        { name: "Marco Rossi", catches: 1, runouts: 0 },
+                      ],
+                    },
+                    {
+                      battingTeam: "Lightning Lions",
+                      total: 165,
+                      wickets: 5,
+                      overs: 18.4,
+                      batting: [
+                        {
+                          name: "Carlos Fernandez",
+                          runs: 60,
+                          balls: 44,
+                          fours: 7,
+                          sixes: 2,
+                          out: "b Shah",
+                        },
+                        {
+                          name: "Miguel Vega",
+                          runs: 38,
+                          balls: 30,
+                          fours: 4,
+                          sixes: 1,
+                          out: "c Kumar b Ali",
+                        },
+                        {
+                          name: "Marco Rossi",
+                          runs: 28,
+                          balls: 22,
+                          fours: 3,
+                          sixes: 0,
+                          out: "b Iqbal",
+                        },
+                        {
+                          name: "Luis Diaz",
+                          runs: 22,
+                          balls: 16,
+                          fours: 2,
+                          sixes: 1,
+                          out: "not out",
+                        },
+                        {
+                          name: "Ivan Petrov",
+                          runs: 10,
+                          balls: 8,
+                          fours: 1,
+                          sixes: 0,
+                          out: "b Ali",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Amir Shah",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 35,
+                          wickets: 1,
+                          economy: 8.75,
+                        },
+                        {
+                          name: "Hassan Ali",
+                          overs: 3.4,
+                          maidens: 0,
+                          runs: 30,
+                          wickets: 2,
+                          economy: 8.18,
+                        },
+                        {
+                          name: "Farhan Iqbal",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 38,
+                          wickets: 1,
+                          economy: 9.5,
+                        },
+                      ],
+                      fielding: [{ name: "Raj Kumar", catches: 1, runouts: 0 }],
+                    },
+                  ],
+                },
+                {
+                  id: "M003",
+                  date: "2023-05-01",
+                  venue: "City Arena",
+                  team1: "Thunder Eagles",
+                  team2: "Storm Warriors",
+                  toss: "Thunder Eagles",
+                  elected: "bat",
+                  result: "No result (Rain)",
+                  winner: null,
+                  innings: [
+                    {
+                      battingTeam: "Thunder Eagles",
+                      total: 95,
+                      wickets: 3,
+                      overs: 10,
+                      batting: [
+                        {
+                          name: "Malik Hassan",
+                          runs: 38,
+                          balls: 28,
+                          fours: 4,
+                          sixes: 1,
+                          out: "c Shah b Kumar",
+                        },
+                        {
+                          name: "James Ali",
+                          runs: 25,
+                          balls: 20,
+                          fours: 3,
+                          sixes: 0,
+                          out: "b Iqbal",
+                        },
+                        {
+                          name: "Tom Jones",
+                          runs: 20,
+                          balls: 15,
+                          fours: 2,
+                          sixes: 0,
+                          out: "not out",
+                        },
+                        {
+                          name: "Chris Thompson",
+                          runs: 12,
+                          balls: 9,
+                          fours: 1,
+                          sixes: 0,
+                          out: "not out",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Raj Kumar",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 32,
+                          wickets: 1,
+                          economy: 8.0,
+                        },
+                        {
+                          name: "Farhan Iqbal",
+                          overs: 3,
+                          maidens: 0,
+                          runs: 28,
+                          wickets: 1,
+                          economy: 9.33,
+                        },
+                        {
+                          name: "Amir Shah",
+                          overs: 3,
+                          maidens: 0,
+                          runs: 35,
+                          wickets: 1,
+                          economy: 11.67,
+                        },
+                      ],
+                      fielding: [{ name: "Amir Shah", catches: 1, runouts: 0 }],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "S2024",
+              name: "Season 2024",
+              matches: [
+                {
+                  id: "M004",
+                  date: "2024-03-15",
+                  venue: "National Stadium",
+                  team1: "Royal Strikers",
+                  team2: "Storm Warriors",
+                  toss: "Storm Warriors",
+                  elected: "field",
+                  result: "Royal Strikers won by 8 wickets",
+                  winner: "Royal Strikers",
+                  innings: [
+                    {
+                      battingTeam: "Storm Warriors",
+                      total: 142,
+                      wickets: 10,
+                      overs: 18.3,
+                      batting: [
+                        {
+                          name: "Raj Kumar",
+                          runs: 48,
+                          balls: 38,
+                          fours: 5,
+                          sixes: 1,
+                          out: "c Sharma b Kumar",
+                        },
+                        {
+                          name: "Amir Shah",
+                          runs: 32,
+                          balls: 28,
+                          fours: 3,
+                          sixes: 0,
+                          out: "b Nair",
+                        },
+                        {
+                          name: "Hassan Ali",
+                          runs: 22,
+                          balls: 20,
+                          fours: 2,
+                          sixes: 0,
+                          out: "b Kapoor",
+                        },
+                        {
+                          name: "Bilal Ahmed",
+                          runs: 18,
+                          balls: 15,
+                          fours: 2,
+                          sixes: 0,
+                          out: "c Patel b Singh",
+                        },
+                        {
+                          name: "Omar Sheikh",
+                          runs: 10,
+                          balls: 8,
+                          fours: 1,
+                          sixes: 0,
+                          out: "b Nair",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Suresh Kumar",
+                          overs: 4,
+                          maidens: 1,
+                          runs: 25,
+                          wickets: 2,
+                          economy: 6.25,
+                        },
+                        {
+                          name: "Vikram Nair",
+                          overs: 3.3,
+                          maidens: 0,
+                          runs: 28,
+                          wickets: 2,
+                          economy: 8.0,
+                        },
+                        {
+                          name: "Priya Kapoor",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 32,
+                          wickets: 1,
+                          economy: 8.0,
+                        },
+                        {
+                          name: "Dev Singh",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 30,
+                          wickets: 2,
+                          economy: 7.5,
+                        },
+                        {
+                          name: "Kiran Mehta",
+                          overs: 3,
+                          maidens: 0,
+                          runs: 27,
+                          wickets: 2,
+                          economy: 9.0,
+                        },
+                      ],
+                      fielding: [
+                        { name: "Arjun Sharma", catches: 1, runouts: 0 },
+                        { name: "Rohan Patel", catches: 1, runouts: 0 },
+                      ],
+                    },
+                    {
+                      battingTeam: "Royal Strikers",
+                      total: 143,
+                      wickets: 2,
+                      overs: 16.2,
+                      batting: [
+                        {
+                          name: "Arjun Sharma",
+                          runs: 78,
+                          balls: 54,
+                          fours: 9,
+                          sixes: 3,
+                          out: "b Iqbal",
+                        },
+                        {
+                          name: "Rohan Patel",
+                          runs: 44,
+                          balls: 38,
+                          fours: 5,
+                          sixes: 1,
+                          out: "not out",
+                        },
+                        {
+                          name: "Dev Singh",
+                          runs: 15,
+                          balls: 10,
+                          fours: 2,
+                          sixes: 0,
+                          out: "not out",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Farhan Iqbal",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 35,
+                          wickets: 1,
+                          economy: 8.75,
+                        },
+                        {
+                          name: "Amir Shah",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 32,
+                          wickets: 1,
+                          economy: 8.0,
+                        },
+                        {
+                          name: "Hassan Ali",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 38,
+                          wickets: 0,
+                          economy: 9.5,
+                        },
+                      ],
+                      fielding: [],
+                    },
+                  ],
+                },
+                {
+                  id: "M005",
+                  date: "2024-03-22",
+                  venue: "Green Park Stadium",
+                  team1: "Thunder Eagles",
+                  team2: "Lightning Lions",
+                  toss: "Lightning Lions",
+                  elected: "bat",
+                  result: "Thunder Eagles won by 22 runs",
+                  winner: "Thunder Eagles",
+                  innings: [
+                    {
+                      battingTeam: "Lightning Lions",
+                      total: 175,
+                      wickets: 8,
+                      overs: 20,
+                      batting: [
+                        {
+                          name: "Carlos Fernandez",
+                          runs: 65,
+                          balls: 48,
+                          fours: 7,
+                          sixes: 2,
+                          out: "c Thompson b Hassan",
+                        },
+                        {
+                          name: "Miguel Vega",
+                          runs: 42,
+                          balls: 35,
+                          fours: 4,
+                          sixes: 1,
+                          out: "b Ali",
+                        },
+                        {
+                          name: "Luis Diaz",
+                          runs: 28,
+                          balls: 22,
+                          fours: 3,
+                          sixes: 0,
+                          out: "b Hassan",
+                        },
+                        {
+                          name: "Marco Rossi",
+                          runs: 18,
+                          balls: 14,
+                          fours: 2,
+                          sixes: 0,
+                          out: "c Jones b Wright",
+                        },
+                        {
+                          name: "Ivan Petrov",
+                          runs: 12,
+                          balls: 9,
+                          fours: 1,
+                          sixes: 0,
+                          out: "b Clarke",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Malik Hassan",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 32,
+                          wickets: 2,
+                          economy: 8.0,
+                        },
+                        {
+                          name: "James Ali",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 38,
+                          wickets: 1,
+                          economy: 9.5,
+                        },
+                        {
+                          name: "Sam Wright",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 40,
+                          wickets: 2,
+                          economy: 10.0,
+                        },
+                        {
+                          name: "Ben Clarke",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 35,
+                          wickets: 1,
+                          economy: 8.75,
+                        },
+                        {
+                          name: "Chris Thompson",
+                          overs: 4,
+                          maidens: 1,
+                          runs: 30,
+                          wickets: 1,
+                          economy: 7.5,
+                        },
+                      ],
+                      fielding: [
+                        { name: "Chris Thompson", catches: 1, runouts: 0 },
+                        { name: "Tom Jones", catches: 1, runouts: 0 },
+                      ],
+                    },
+                    {
+                      battingTeam: "Thunder Eagles",
+                      total: 197,
+                      wickets: 5,
+                      overs: 20,
+                      batting: [
+                        {
+                          name: "Malik Hassan",
+                          runs: 88,
+                          balls: 58,
+                          fours: 10,
+                          sixes: 4,
+                          out: "c Fernandez b Vega",
+                        },
+                        {
+                          name: "James Ali",
+                          runs: 50,
+                          balls: 40,
+                          fours: 5,
+                          sixes: 2,
+                          out: "not out",
+                        },
+                        {
+                          name: "Tom Jones",
+                          runs: 28,
+                          balls: 22,
+                          fours: 3,
+                          sixes: 0,
+                          out: "b Diaz",
+                        },
+                        {
+                          name: "Chris Thompson",
+                          runs: 18,
+                          balls: 13,
+                          fours: 2,
+                          sixes: 0,
+                          out: "c Rossi b Cruz",
+                        },
+                      ],
+                      bowling: [
+                        {
+                          name: "Carlos Fernandez",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 42,
+                          wickets: 0,
+                          economy: 10.5,
+                        },
+                        {
+                          name: "Miguel Vega",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 38,
+                          wickets: 1,
+                          economy: 9.5,
+                        },
+                        {
+                          name: "Luis Diaz",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 40,
+                          wickets: 1,
+                          economy: 10.0,
+                        },
+                        {
+                          name: "Ivan Petrov",
+                          overs: 4,
+                          maidens: 0,
+                          runs: 45,
+                          wickets: 1,
+                          economy: 11.25,
+                        },
+                      ],
+                      fielding: [
+                        { name: "Carlos Fernandez", catches: 1, runouts: 0 },
+                        { name: "Marco Rossi", catches: 1, runouts: 0 },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        };
+      }
+
+      loadData();
+    </script>
+  </body>
+</html>
