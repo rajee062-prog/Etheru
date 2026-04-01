@@ -1,0 +1,95 @@
+{
+  "name": "Premier Cricket League",
+  "seasons": [
+    {
+      "id": "P2023",
+      "name": "Practice 2026",
+      "matches": [
+        {
+          "id": "P1",
+          "date": "02-04-2026",
+          "venue": "Kothap",
+          "team1": "Royal Lions",
+          "team2": "Eagles",
+          "toss": "",
+          "elected": "",
+          "result": "",
+          "winner": "",
+          "innings": [
+            {
+              "battingTeam": "NA",
+              "total": 0,
+              "wickets": 0,
+              "overs": 0,
+              "batting": [
+               
+              ],
+              "bowling": [
+                
+              ],
+              "fielding": [
+               
+              ]
+            },
+            {
+              "battingTeam": "NA",
+              "total": 0,
+              "wickets": 0,
+              "overs": 0,
+              "batting": [
+                
+              ],
+              "bowling": [
+                
+              ],
+              "fielding": [
+               
+              ]
+            }
+          ]
+        },
+        {
+          "id": "P2",
+          "date": "02-04-2026",
+          "venue": "",
+          "team1": "Fearless Fighters",
+          "team2": "Hunters",
+          "toss": "",
+          "elected": "",
+          "result": "",
+          "winner": "",
+          "innings": [
+            {
+              "battingTeam": "",
+              "total": 0,
+              "wickets": 0,
+              "overs": 0,
+              "batting": [
+                
+              ],
+              "bowling": [
+                
+              ],
+              "fielding": [
+               
+              ]
+            },
+            {
+              "battingTeam": "",
+              "total": 0,
+              "wickets": 0,
+              "overs": 0,
+              "batting": [
+                
+              ],
+              "bowling": [
+                
+              ],
+              "fielding": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
