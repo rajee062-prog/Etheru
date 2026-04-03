@@ -2,88 +2,513 @@
   "name": "Premier Cricket League",
   "seasons": [
     {
-      "id": "P2023",
-      "name": "Practice 2026",
+      "id": "P2026",
+      "name": "Season 2026",
       "matches": [
         {
           "id": "P1",
-          "date": "02-04-2026",
-          "venue": "",
-          "team1": "Royal Lions",
-          "team2": "Eagles",
-          "toss": "",
-          "elected": "",
-          "result": "",
-          "winner": "",
+          "date": "03-04-2026",
+          "venue": "EPL Ground",
+          "team1": "Etheru Eagles",
+          "team2": "Etheru Fearless Fighters",
+          "toss": "Etheru Fearless Fighters",
+          "elected": "bat",
+          "result": "Etheru Eagles won by 7 wickets",
+          "winner": "Etheru Eagles",
           "innings": [
             {
-              "battingTeam": "NA",
-              "total": 0,
-              "wickets": 0,
-              "overs": 0,
+              "battingTeam": "Etheru Fearless Fighters",
+              "total": 46,
+              "wickets": 10,
+              "overs": 10.3,
               "batting": [
-               
+               {
+                  "name": "Vemula Kiran",
+                  "runs": 7,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Abbas b Mekathoti Anand Paul"
+                },
+                {
+                  "name": "Pulimi Akhil",
+                  "runs": 1,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "*"
+                },
+                {
+                  "name": "Mekathoti Rajesh Babu",
+                  "runs": 7,
+                  "balls": 0,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "c Katta Sunil b Mekathoti Anand Paul"
+                },
+                {
+                  "name": "Bathula Kiran",
+                  "runs": 0,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Mekathoti Anand Paul"
+                },
+                {
+                  "name": "Dammu Ramesh",
+                  "runs": 8,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Katta Sunil b Nandyala Pradeep"
+                },
+                {
+                  "name": "Nandyala Praveen",
+                  "runs": 0,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "Run out Katta Hanok"
+                },
+                {
+                  "name": "Vamsi",
+                  "runs": 0,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Mekathoti Anand Paul"
+                },
+                 {
+                  "name": "Mekathoti Vinod",
+                  "runs": 1,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Nandyala Gopi"
+                },
+                {
+                  "name": "Kalintha Hyma Rao",
+                  "runs": 5,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "Run out"
+                },
+                {
+                  "name": "Bobby",
+                  "runs": 0,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Mekathoti Anand Paul"
+                },
+                {
+                  "name": "Kanaparthi Antoni",
+                  "runs": 0,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Katta Sunil b Gera Venkatesh"
+                }
               ],
               "bowling": [
-                
+                 {
+                  "name": "Borugadda Lazar",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 11,
+                  "wickets": 0,
+                  "economy": 5.50
+                },
+                {
+                  "name": "Dammu Rahul",
+                  "overs": 1,
+                  "maidens": 0,
+                  "runs": 3,
+                  "wickets": 0,
+                  "economy": 3
+                },
+                {
+                  "name": "Vemula Bittu",
+                  "overs": 1,
+                  "maidens": 0,
+                  "runs": 5,
+                  "wickets": 0,
+                  "economy": 5
+                },
+                {
+                  "name": "Mekathoti Anand Paul",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 9,
+                  "wickets": 5,
+                  "economy": 3
+                },
+                 {
+                  "name": "Nandyala Pradeep",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 13,
+                  "wickets": 2,
+                  "economy": 4.33
+                },
+                {
+                  "name": "Gera Venkatesh",
+                  "overs": 1,
+                  "maidens": 0,
+                  "runs": 2,
+                  "wickets": 1,
+                  "economy": 4.33
+                }
               ],
               "fielding": [
-               
+               { "name": "Katta Sunil", "catches": 2, "runouts": 0 },
+               { "name": "Abbas", "catches": 1, "runouts": 0 }
               ]
             },
             {
-              "battingTeam": "NA",
-              "total": 0,
-              "wickets": 0,
-              "overs": 0,
+              "battingTeam": "Etheru Eagles",
+              "total": 51,
+              "wickets": 3,
+              "overs": 7,
               "batting": [
-                
+                {
+                  "name": "Mekathoti Anand Paul",
+                  "runs": 6,
+                  "balls": 0,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "c Vamsi b Mekathoti Rajesh Babu"
+                },
+                {
+                  "name": "Vemula Bittu",
+                  "runs": 17,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "Run out"
+                },
+                {
+                  "name": "Abbas",
+                  "runs": 5,
+                  "balls": 0,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "b Vamsi"
+                },
+                {
+                  "name": "Katta Hanok",
+                  "runs": 15,
+                  "balls": 0,
+                  "fours": 2,
+                  "sixes": 0,
+                  "out": "*"
+                },
+                                {
+                  "name": "Nandyala Pradeep",
+                  "runs": 1,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "*"
+                }
               ],
               "bowling": [
-                
+                {
+                  "name": "Mekathoti Vinod",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 12,
+                  "wickets": 0,
+                  "economy": 6
+                },
+                 {
+                  "name": "Mekathoti Rajesh Babu",
+                  "overs": 1,
+                  "maidens": 0,
+                  "runs": 6,
+                  "wickets": 1,
+                  "economy": 6
+                },
+                {
+                  "name": "Vamsi",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 10,
+                  "wickets": 1,
+                  "economy": 5
+                },
+                 {
+                  "name": "nandyala praveen",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 19,
+                  "wickets": 0,
+                  "economy": 8.5
+                }
               ],
               "fielding": [
-               
+                { "name": "Vamsi", "catches": 1, "runouts": 0 }
               ]
             }
           ]
         },
         {
           "id": "P2",
-          "date": "02-04-2026",
-          "venue": "",
-          "team1": "Fearless Fighters",
-          "team2": "Hunters",
-          "toss": "",
-          "elected": "",
-          "result": "",
-          "winner": "",
+          "date": "03-04-2026",
+          "venue": "EPL Ground",
+          "team1": "Etheru Royal Lions",
+          "team2": "Etheru Hunters",
+          "toss": "Etheru Royal Lions",
+          "elected": "field",
+          "result": "Etheru Royal Lions won by 1 wicket",
+          "winner": "Etheru Royal Lions",
           "innings": [
             {
-              "battingTeam": "",
-              "total": 0,
-              "wickets": 0,
-              "overs": 0,
+              "battingTeam": "Etheru Hunters",
+              "total": 88,
+              "wickets": 9,
+              "overs": 12,
               "batting": [
-                
+                {
+                  "name": "Dammu Ravi Varma",
+                  "runs": 0,
+                  "balls": 1,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Munna b Vikram"
+                },
+                {
+                  "name": "Reddy",
+                  "runs": 7,
+                  "balls": 7,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "c Munna b Vikram"
+                },
+                {
+                  "name": "Kittu",
+                  "runs": 8,
+                  "balls": 6,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "c Amith b Vikram"
+                },
+                {
+                  "name": "Sridhar",
+                  "runs": 2,
+                  "balls": 4,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Ravi b Harsha"
+                },
+                {
+                  "name": "Bunny",
+                  "runs": 1,
+                  "balls": 1,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Ravi b Harsha"
+                },
+                {
+                  "name": "Gera Ashok",
+                  "runs": 32,
+                  "balls": 15,
+                  "fours": 2,
+                  "sixes": 2,
+                  "out": "c Abhi b Ravi"
+                },
+                {
+                  "name": "Chintu",
+                  "runs": 6,
+                  "balls": 4,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Raja Rathnam"
+                },
+                 {
+                  "name": "Gera Subhash",
+                  "runs": 9,
+                  "balls": 7,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Raja Rathnam"
+                },
+                {
+                  "name": "Russel",
+                  "runs": 7,
+                  "balls": 3,
+                  "fours": 1,
+                  "sixes": 0,
+                  "out": "Run out"
+                }
               ],
               "bowling": [
-                
+                 {
+                  "name": "Vikram",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 8,
+                  "wickets": 2,
+                  "economy": 4.0
+                },
+                 {
+                  "name": "Harsha",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 14,
+                  "wickets": 2,
+                  "economy": 7.0
+                },
+                 {
+                  "name": "Ravi Teja",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 36,
+                  "wickets": 2,
+                  "economy": 12.0
+                },
+                {
+                  "name": "Raja Rathnam",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 8,
+                  "wickets": 2,
+                  "economy": 2.33
+                },
+                {
+                  "name": "Abhi",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 10,
+                  "wickets": 0,
+                  "economy": 5.0
+                }
               ],
               "fielding": [
                
               ]
             },
             {
-              "battingTeam": "",
-              "total": 0,
-              "wickets": 0,
-              "overs": 0,
+              "battingTeam": "Etheru Royal Lions",
+              "total": 90,
+              "wickets": 7,
+              "overs": 11.3,
               "batting": [
-                
+                {
+                  "name": "Vikram",
+                  "runs": 5,
+                  "balls": 5,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c dileep b sridhar"
+                },
+                 {
+                  "name": "Steeva",
+                  "runs": 47,
+                  "balls": 0,
+                  "fours": 5,
+                  "sixes": 1,
+                  "out": "c Reddy b sridhar"
+                },
+                 {
+                  "name": "Gopi",
+                  "runs": 0,
+                  "balls": 1,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "Subhash/Sridhar"
+                },
+                {
+                  "name": "Raja Rathnam",
+                  "runs": 6,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 1,
+                  "out": "Subhash/Sridhar"
+                },
+                {
+                  "name": "Ravi Teja",
+                  "runs": 4,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "Keeper catch"
+                },
+                {
+                  "name": "Ganesh",
+                  "runs": 0,
+                  "balls": 2,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "b Gera Ashok"
+                },
+                {
+                  "name": "Harsha",
+                  "runs": 9,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "*"
+                },
+                {
+                  "name": "Munnna",
+                  "runs": 0,
+                  "balls": 1,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "c Chintu"
+                },
+                {
+                  "name": "Abhi",
+                  "runs": 7,
+                  "balls": 0,
+                  "fours": 0,
+                  "sixes": 0,
+                  "out": "*"
+                }
               ],
               "bowling": [
-                
+                {
+                  "name": "Gera Ashok",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 10,
+                  "wickets": 3,
+                  "economy": 3.33
+                },
+                {
+                  "name": "Chintu",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 22,
+                  "wickets": 0,
+                  "economy": 11
+                },
+                {
+                  "name": "Sridhar",
+                  "overs": 3,
+                  "maidens": 0,
+                  "runs": 21,
+                  "wickets": 4,
+                  "economy": 7
+                },
+                {
+                  "name": "Kittu",
+                  "overs": 2,
+                  "maidens": 0,
+                  "runs": 19,
+                  "wickets": 0,
+                  "economy": 9.5
+                },
+                {
+                  "name": "Gera Subhash",
+                  "overs": 1.2,
+                  "maidens": 0,
+                  "runs": 9,
+                  "wickets": 0,
+                  "economy": 7.50
+                }
               ],
               "fielding": []
             }
